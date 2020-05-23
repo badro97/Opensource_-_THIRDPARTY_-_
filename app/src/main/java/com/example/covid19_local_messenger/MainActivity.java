@@ -11,7 +11,6 @@ import com.naver.maps.map.MapFragment;
 import com.naver.maps.map.NaverMap;
 import com.naver.maps.map.OnMapReadyCallback;
 import com.naver.maps.map.UiSettings;
-import com.naver.maps.map.overlay.InfoWindow;
 import com.naver.maps.map.overlay.Marker;
 import com.naver.maps.map.overlay.Overlay;
 import com.naver.maps.map.overlay.OverlayImage;
@@ -32,7 +31,6 @@ public class MainActivity extends AppCompatActivity implements NaverMap.OnMapCli
 
     private FusedLocationSource locationSource;
     private NaverMap naverMap;
-    private InfoWindow infoWindow;
     private List<Marker> markerList = new ArrayList<Marker>();
     private boolean isCameraAnimated = false;
 

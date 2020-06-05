@@ -2,11 +2,18 @@ package com.example.covid19_local_messenger;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.graphics.PointF;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 
 import com.naver.maps.geometry.LatLng;
+import com.naver.maps.map.LocationTrackingMode;
 import com.naver.maps.map.MapFragment;
 import com.naver.maps.map.NaverMap;
 import com.naver.maps.map.OnMapReadyCallback;
@@ -31,8 +38,12 @@ public class MainActivity extends AppCompatActivity implements NaverMap.OnMapCli
 
     private FusedLocationSource locationSource;
     private NaverMap naverMap;
+
     private List<Marker> markerList = new ArrayList<Marker>();
     private boolean isCameraAnimated = false;
+
+    LocationManager locationManager;
+    LocationListener locationListener;
 
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 100;
 
@@ -52,6 +63,7 @@ public class MainActivity extends AppCompatActivity implements NaverMap.OnMapCli
         //현재 위치 추적 (권한)
         locationSource = new FusedLocationSource(this, LOCATION_PERMISSION_REQUEST_CODE);
         naverMap.setLocationSource(locationSource);
+        naverMap.setLocationTrackingMode(LocationTrackingMode.Face);
 
         //현재 위치로 이동 버튼
         UiSettings uiSettings = naverMap.getUiSettings();
@@ -65,13 +77,49 @@ public class MainActivity extends AppCompatActivity implements NaverMap.OnMapCli
         naverMap.addOnCameraChangeListener(this);
         naverMap.addOnCameraIdleListener(this);
         naverMap.setOnMapClickListener(this);
+
+        locationListener = new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+                if (location.getProvider().equals(LocationManager.GPS_PROVIDER)) {
+                    double longitude = location.getLongitude();
+                    double latitude = location.getLatitude();
+                    float accuracy = location.getAccuracy();
+                }
+            }
+
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+
+            }
+
+            @Override
+            public void onProviderEnabled(String provider) {
+
+            }
+
+            @Override
+            public void onProviderDisabled(String provider) {
+
+            }
+        };
     }
+
 
 
     @Override //위치 권한
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
+        if (locationSource.onRequestPermissionsResult(
+                requestCode, permissions, grantResults)) {
+            if (!locationSource.isActivated()) { // 권한 거부됨
+                naverMap.setLocationTrackingMode(LocationTrackingMode.Face);
+            }
+            return;
+        }
+        super.onRequestPermissionsResult(
+                requestCode, permissions, grantResults);
         switch (requestCode) {
             case LOCATION_PERMISSION_REQUEST_CODE:
                 locationSource.onRequestPermissionsResult(requestCode, permissions, grantResults);

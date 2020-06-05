@@ -52,8 +52,8 @@ public class MainActivity extends AppCompatActivity implements NaverMap.OnMapCli
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        MapFragment mapFragment = (MapFragment)getSupportFragmentManager().findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
+        mapView = findViewById(R.id.map_view);
+        mapView.getMapAsync(this);
     }
 
     @Override
